@@ -46,13 +46,25 @@ class Weather:
     description: str
     timestamp: str
 
+def get_city_and_weather() -> Dict[str, Weather]:
+    return weather_data
+    
+@strawberry.type
+class Query:
+    @strawberry.field
+    def cities_and_weather(self) -> Dict[str, Weather]:
+        return get_city_and_weather()
 
-# TODO
-Query = None
 
-# TODO
-Mutation = None
-
+@strawberry.type
+class Mutation:
+    @strawberry.mutation
+    def delete_weather(self, city: str) -> bool:
+        if city in weather_data:
+            del weather_data[city]
+            return True
+        return False
+        
 schema = strawberry.Schema(query=Query, mutation=Mutation)
 app.include_router(GraphQLRouter(schema), prefix="/graphql")
 
